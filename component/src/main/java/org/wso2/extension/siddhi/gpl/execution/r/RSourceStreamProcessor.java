@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.extension.siddhi.execution.r;
+package org.wso2.extension.siddhi.gpl.execution.r;
 
 import org.wso2.siddhi.core.config.ExecutionPlanContext;
 import org.wso2.siddhi.core.exception.ExecutionPlanCreationException;
@@ -26,29 +26,33 @@ import org.wso2.siddhi.core.executor.VariableExpressionExecutor;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.Attribute;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
-public class RScriptStreamProcessor extends RStreamProcessor {
+public class RSourceStreamProcessor extends RStreamProcessor {
     @Override
     protected List<Attribute> init(AbstractDefinition abstractDefinition, ExpressionExecutor[] expressionExecutors, ExecutionPlanContext executionPlanContext) {
 
         if (attributeExpressionExecutors.length < 2) {
             throw new ExecutionPlanCreationException("Wrong number of attributes given. Expected 2 or more, found " +
                     attributeExpressionLength+ "\n" +
-                    "Usage: #R:eval(script:string, outputVariables:string, input1, ...)");
+                    "Usage: #R:evalSource(filePath:string, outputVariables:string, input1, ...)");
         }
         String scriptString;
+        String filePath;
         String outputString;
 
         try {
             if (!(attributeExpressionExecutors[0] instanceof ConstantExpressionExecutor)) {
                 throw new ExecutionPlanCreationException("First parameter should be a constant");
             }
-            scriptString = (String) attributeExpressionExecutors[0].execute(null);
+            filePath = (String) attributeExpressionExecutors[0].execute(null);
         } catch (ClassCastException e) {
             throw new ExecutionPlanCreationException("First parameter should be of type string. Found " +
                     attributeExpressionExecutors[0].execute(null).getClass().getCanonicalName() + "\n" +
-                    "Usage: #R:eval(script:string, outputVariables:string, input1, ...)");
+                    "Usage: #R:evalSource(filePath:string, outputVariables:string, input1, ...)");
         }
         try {
             if (!(attributeExpressionExecutors[1] instanceof ConstantExpressionExecutor)) {
@@ -58,7 +62,7 @@ public class RScriptStreamProcessor extends RStreamProcessor {
         } catch (ClassCastException e) {
             throw new ExecutionPlanCreationException("Second parameter should be of type string. Found " +
                     attributeExpressionExecutors[1].execute(null).getClass().getCanonicalName() + "\n" +
-                    "Usage: #R:eval(script:string, outputVariables:string, input1, ...)");
+                    "Usage: #R:evalSource(filePath:string, outputVariables:string, input1, ...)");
         }
 
         for (int i = 2; i < attributeExpressionLength; i++) {
@@ -67,6 +71,13 @@ public class RScriptStreamProcessor extends RStreamProcessor {
             } else {
                 throw new ExecutionPlanCreationException("Parameter " + (i + 1) + " should be a variable");
             }
+        }
+        try {
+            scriptString = new String(Files.readAllBytes(Paths.get(filePath)));
+        } catch (IOException e) {
+            throw new ExecutionPlanCreationException("Error while reading R source file", e);
+        } catch (SecurityException e) {
+            throw new ExecutionPlanCreationException("Access denied while reading R source file", e);
         }
         return initialize(scriptString, outputString);
     }

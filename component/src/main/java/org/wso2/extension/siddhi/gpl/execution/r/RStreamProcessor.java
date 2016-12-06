@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.extension.siddhi.execution.r;
+package org.wso2.extension.siddhi.gpl.execution.r;
 
 import org.apache.log4j.Logger;
 import org.rosuda.REngine.JRI.JRIEngine;
