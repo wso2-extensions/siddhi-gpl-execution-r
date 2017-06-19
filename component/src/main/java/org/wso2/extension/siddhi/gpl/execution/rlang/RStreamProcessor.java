@@ -1,5 +1,5 @@
 /*
- * Copyright (c)  2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -16,18 +16,26 @@
  * under the License.
  */
 
-package org.wso2.extension.siddhi.gpl.execution.r;
+package org.wso2.extension.siddhi.gpl.execution.rlang;
 
 import org.apache.log4j.Logger;
 import org.rosuda.REngine.JRI.JRIEngine;
-import org.rosuda.REngine.*;
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.REXPDouble;
+import org.rosuda.REngine.REXPInteger;
+import org.rosuda.REngine.REXPLogical;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REXPString;
+import org.rosuda.REngine.REngine;
+import org.rosuda.REngine.REngineException;
+import org.rosuda.REngine.RList;
 import org.wso2.siddhi.core.event.ComplexEvent;
 import org.wso2.siddhi.core.event.ComplexEventChunk;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEventCloner;
 import org.wso2.siddhi.core.event.stream.populater.ComplexEventPopulater;
-import org.wso2.siddhi.core.exception.ExecutionPlanCreationException;
-import org.wso2.siddhi.core.exception.ExecutionPlanRuntimeException;
+import org.wso2.siddhi.core.exception.SiddhiAppCreationException;
+import org.wso2.siddhi.core.exception.SiddhiAppRuntimeException;
 import org.wso2.siddhi.core.executor.ExpressionExecutor;
 import org.wso2.siddhi.core.query.processor.Processor;
 import org.wso2.siddhi.core.query.processor.stream.StreamProcessor;
@@ -39,6 +47,9 @@ import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Abstract class which is extended by RScriptStreamProcessor and RSourceStreamProcessor
+ */
 public abstract class RStreamProcessor extends StreamProcessor {
 
     List<Attribute> inputAttributes = new ArrayList<Attribute>();
@@ -51,7 +62,8 @@ public abstract class RStreamProcessor extends StreamProcessor {
     static Logger log = Logger.getLogger(RStreamProcessor.class);
 
     @Override
-    protected void process(ComplexEventChunk<StreamEvent> complexEventChunk, Processor processor, StreamEventCloner streamEventCloner, ComplexEventPopulater complexEventPopulater) {
+    protected void process(ComplexEventChunk<StreamEvent> complexEventChunk, Processor processor,
+                           StreamEventCloner streamEventCloner, ComplexEventPopulater complexEventPopulater) {
         StreamEvent streamEvent;
         StreamEvent lastCurrentEvent = null;
         List<StreamEvent> eventList = new ArrayList<StreamEvent>();
@@ -63,14 +75,14 @@ public abstract class RStreamProcessor extends StreamProcessor {
                 complexEventChunk.remove();
             }
         }
-        if(!eventList.isEmpty()) {
+        if (!eventList.isEmpty()) {
             complexEventPopulater.populateComplexEvent(lastCurrentEvent, process(eventList));
             complexEventChunk.add(lastCurrentEvent);
         }
         nextProcessor.process(complexEventChunk);
     }
 
-    private Object[] process(List<StreamEvent> eventList) {
+    private Object[] process(List<StreamEvent> eventList) throws SiddhiAppRuntimeException {
         try {
             REXP eventData;
             ExpressionExecutor expressionExecutor;
@@ -101,8 +113,10 @@ public abstract class RStreamProcessor extends StreamProcessor {
                 re.assign(inputAttributes.get(j - 2).getName(), eventData, env);
             }
             re.eval(script, env, false);
-        } catch (Exception e) {
-            throw new ExecutionPlanRuntimeException("Unable to evaluate the script", e);
+        } catch (REngineException e) {
+            throw new SiddhiAppRuntimeException("Unable to evaluate the script", e);
+        } catch (REXPMismatchException e) {
+            throw new SiddhiAppRuntimeException("Mismatch in returned output and expected output", e);
         }
 
         try {
@@ -115,42 +129,45 @@ public abstract class RStreamProcessor extends StreamProcessor {
                     case BOOL:
                         if (result.isLogical()) {
                             data[i] = (result.asInteger() == 1);
-                            break;
                         }
+                        break;
                     case INT:
                         if (result.isNumeric()) {
                             data[i] = result.asInteger();
-                            break;
                         }
+                        break;
                     case LONG:
                         if (result.isNumeric()) {
                             data[i] = (long) result.asDouble();
-                            break;
                         }
+                        break;
                     case FLOAT:
                         if (result.isNumeric()) {
                             data[i] = ((Double) result.asDouble()).floatValue();
-                            break;
                         }
+                        break;
                     case DOUBLE:
                         if (result.isNumeric()) {
                             data[i] = result.asDouble();
-                            break;
                         }
+                        break;
                     case STRING:
                         if (result.isString()) {
                             data[i] = result.asString();
-                            break;
                         }
+                        break;
                     default:
-                        throw new ExecutionPlanRuntimeException("Mismatch in returned and expected output. Expected: " +
-                                additionalAttributes.get(i).getType() + " Returned: " +
-                                result.asNativeJavaObject().getClass().getCanonicalName());
+                        throw new SiddhiAppRuntimeException(
+                                "Mismatch in returned and expected output. Expected: " + additionalAttributes.get(i)
+                                        .getType() + " Returned: " + result.asNativeJavaObject().getClass()
+                                        .getCanonicalName());
                 }
             }
             return data;
-        } catch (Exception e) {
-            throw new ExecutionPlanRuntimeException("Mismatch in returned output and expected output", e);
+        } catch (REXPMismatchException e) {
+            throw new SiddhiAppRuntimeException("Mismatch in returned output and expected output", e);
+        } catch (REngineException e) {
+            throw new SiddhiAppRuntimeException("Unable to evaluate the script", e);
         }
     }
 
@@ -161,16 +178,17 @@ public abstract class RStreamProcessor extends StreamProcessor {
             // Create a new R environment
             env = re.newEnvironment(null, true);
         } catch (Exception e) {
-            throw new ExecutionPlanCreationException("Unable to create a new session in R", e);
+            throw new SiddhiAppCreationException("Unable to create a new session in R", e);
         }
         StreamDefinition streamDefinition;
         try {
-            streamDefinition = SiddhiCompiler.parseStreamDefinition("define stream ROutputStream(" +
-                    outputString + ")");
+            streamDefinition =
+                    SiddhiCompiler.parseStreamDefinition("define stream ROutputStream(" + outputString + ")");
 
         } catch (SiddhiParserException e) {
-            throw new ExecutionPlanCreationException("Could not parse the output variables string. Usage: \"a string, b int\"" +
-                    ". Found: \"" + outputString + "\"", e);
+            throw new SiddhiAppCreationException(
+                    "Could not parse the output variables string. Usage: \"a string, b int\"" +
+                            ". Found: \"" + outputString + "\"", e);
         }
 
         List<Attribute> outputAttributes = streamDefinition.getAttributeList();
@@ -190,7 +208,7 @@ public abstract class RStreamProcessor extends StreamProcessor {
             // Parse the script
             script = re.parse(scriptString, false);
         } catch (REngineException e) {
-            throw new ExecutionPlanCreationException("Unable to parse the script: " + scriptString, e);
+            throw new SiddhiAppCreationException("Unable to parse the script: " + scriptString, e);
         }
         return outputAttributes;
     }
@@ -204,17 +222,6 @@ public abstract class RStreamProcessor extends StreamProcessor {
     public void stop() {
 
     }
-
-    @Override
-    public Object[] currentState() {
-        return new Object[0];
-    }
-
-    @Override
-    public void restoreState(Object[] objects) {
-
-    }
-
 
     private REXP doubleToREXP(List<StreamEvent> list, ExpressionExecutor expressionExecutor) {
         double[] arr = new double[list.size()];
