@@ -35,14 +35,14 @@ public class RSourceTestCase {
 
     static final Logger LOG = Logger.getLogger(RSourceTestCase.class);
 
-    protected static SiddhiManager siddhiManager = new SiddhiManager();
+    private static SiddhiManager siddhiManager = new SiddhiManager();
     private int count;
-    protected double value1;
+    private double value1;
     protected double value2;
-    protected boolean valueBool;
-    protected String valueString;
-    protected float valueFloat;
-    protected long valueLong;
+    private boolean valueBool;
+    private String valueString;
+    private float valueFloat;
+    private long valueLong;
 
     @BeforeMethod
     public void init() {
@@ -57,7 +57,7 @@ public class RSourceTestCase {
 
         String defineStream = "@config(async = 'true') define stream weather (time long, temp double); ";
 
-        String executionPlan = defineStream + " @info(name = 'query1') from weather#window.timeBatch(1 sec)" +
+        String executionPlan = defineStream + " @info(name = 'query1') from weather#window.timeBatch(2 sec)" +
                 "#r:evalSource(\"src/test/resources/sample.R\", \"m double, c long\"," +
                 " time, temp)" +
                 " select *" +
@@ -82,7 +82,7 @@ public class RSourceTestCase {
         InputHandler inputHandler = siddhiAppRuntime.getInputHandler("weather");
         inputHandler.send(new Object[]{10L, 55.6d});
         inputHandler.send(new Object[]{20L, 65.6d});
-        Thread.sleep(2000);
+        Thread.sleep(5000);
         inputHandler.send(new Object[]{30L, 75.6d});
         Thread.sleep(500);
         AssertJUnit.assertEquals("Only one event must arrive", 1, count);
@@ -100,8 +100,7 @@ public class RSourceTestCase {
         String defineStream = "@config(async = 'true') define stream weather (time long, temp double); ";
 
         String executionPlan = defineStream + " @info(name = 'query1') from weather#window.lengthBatch(2)" +
-                "#r:evalSource(\"src/test/resources/sample2.R\", \"m int, c float\"," +
-                " time, temp)" +
+                "#r:evalSource(\"src/test/resources/sample2.R\", \"m int, c float\", time, temp)" +
                 " select *" +
                 " insert into dataOut;";
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(executionPlan);

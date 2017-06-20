@@ -1,5 +1,5 @@
 /*
- * Copyright (c)  2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -20,6 +20,9 @@ package org.wso2.extension.siddhi.gpl.execution.rlang;
 
 import org.wso2.siddhi.annotation.Example;
 import org.wso2.siddhi.annotation.Extension;
+import org.wso2.siddhi.annotation.Parameter;
+import org.wso2.siddhi.annotation.ReturnAttribute;
+import org.wso2.siddhi.annotation.util.DataType;
 import org.wso2.siddhi.core.config.SiddhiAppContext;
 import org.wso2.siddhi.core.exception.SiddhiAppCreationException;
 import org.wso2.siddhi.core.executor.ConstantExpressionExecutor;
@@ -43,8 +46,38 @@ import java.util.Map;
 @Extension(
         name = "evalSource",
         namespace = "r",
-        description = "R source Stream processor",
-        examples = @Example(description = "TBD", syntax = "TBD")
+        description = "R source Stream processor. This extension the R script loaded from a file to each event "
+                + "and produces aggregated outputs based on the provided input variable parameters and expected "
+                + "output attributes.",
+        parameters = {
+                @Parameter(name = "file.path",
+                           description = "The file path of the R script where this script uses the input variable "
+                                   + "parameters and produces the expected output attributes.",
+                           type = {DataType.STRING}),
+                @Parameter(name = "output.attributes",
+                           description = "A set of output attributes separated by commas as string. Each attribute is "
+                                   + "denoted as <name><space><type>. e.g., 'output1 string, output2 long'",
+                           type = {DataType.INT, DataType.LONG, DataType.FLOAT, DataType.DOUBLE, DataType.STRING,
+                                   DataType.STRING}),
+                @Parameter(name = "input.attributes",
+                           description = "A set of input attributes separated by commas after output attributes. "
+                                   + "e.g., 'att1, att2'",
+                           type = {DataType.INT, DataType.LONG, DataType.FLOAT, DataType.DOUBLE, DataType.STRING,
+                                   DataType.STRING})
+        },
+        returnAttributes = @ReturnAttribute(
+                name = "outputParameters",
+                description = "This runs the R script for each event and produces  aggregated outputs based on the "
+                        + "provided input variable parameters and expected output attributes.",
+                type = {DataType.INT, DataType.LONG, DataType.FLOAT, DataType.DOUBLE, DataType.STRING,
+                        DataType.STRING}),
+        examples = @Example(
+                description = "TBD",
+                syntax = "@info(name = 'query1')\n"
+                        + "from weather#window.lengthBatch(2)#r:evalSource(\"src/test/resources/sample2.R\", \"m int, "
+                        + "c float\", time, temp)\n"
+                        + "select *\n"
+                        + "insert into dataOut;")
 )
 public class RSourceStreamProcessor extends RStreamProcessor {
     @Override

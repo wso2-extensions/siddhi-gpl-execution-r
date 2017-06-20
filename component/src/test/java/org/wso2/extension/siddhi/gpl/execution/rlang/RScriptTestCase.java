@@ -35,12 +35,12 @@ public class RScriptTestCase {
 
     static final Logger LOG = Logger.getLogger(RScriptTestCase.class);
 
-    protected static SiddhiManager siddhiManager;
+    private static SiddhiManager siddhiManager;
     private int count;
-    protected double doubleValue;
-    protected long longValue;
-    protected int intValue;
-    protected boolean boolValue;
+    private double doubleValue;
+    private long longValue;
+    private int intValue;
+    private boolean boolValue;
 
     @BeforeMethod
     public void init() {
