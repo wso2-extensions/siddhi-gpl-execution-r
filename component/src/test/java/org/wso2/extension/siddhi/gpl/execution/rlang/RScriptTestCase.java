@@ -19,9 +19,9 @@
 package org.wso2.extension.siddhi.gpl.execution.rlang;
 
 import org.apache.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.testng.AssertJUnit;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.wso2.siddhi.core.SiddhiAppRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.event.Event;
@@ -35,14 +35,14 @@ public class RScriptTestCase {
 
     static final Logger LOG = Logger.getLogger(RScriptTestCase.class);
 
-    protected static SiddhiManager siddhiManager;
+    private static SiddhiManager siddhiManager;
     private int count;
-    protected double doubleValue;
-    protected long longValue;
-    protected int intValue;
-    protected boolean boolValue;
+    private double doubleValue;
+    private long longValue;
+    private int intValue;
+    private boolean boolValue;
 
-    @Before
+    @BeforeMethod
     public void init() {
         count = 0;
         siddhiManager = new SiddhiManager();
@@ -81,9 +81,9 @@ public class RScriptTestCase {
         inputHandler.send(new Object[]{20L, 65.6d});
         inputHandler.send(new Object[]{30L, 75.6d});
         Thread.sleep(1000);
-        Assert.assertEquals("Only one event must arrive", 1, count);
-        Assert.assertEquals("Value 1 returned", 10 + 20, longValue);
-        Assert.assertEquals("Value 2 returned", (55.6 + 65.6), doubleValue, 1e-4);
+        AssertJUnit.assertEquals("Only one event must arrive", 1, count);
+        AssertJUnit.assertEquals("Value 1 returned", 10 + 20, longValue);
+        AssertJUnit.assertEquals("Value 2 returned", (55.6 + 65.6), doubleValue, 1e-4);
         siddhiAppRuntime.shutdown();
     }
 
@@ -121,9 +121,9 @@ public class RScriptTestCase {
         Thread.sleep(2500);
         inputHandler.send(new Object[]{30, 75.6});
         Thread.sleep(1000);
-        Assert.assertEquals("Only one event must arrive", 1, count);
-        Assert.assertEquals("Value 1 returned", 30, intValue);
-        Assert.assertEquals("Value 2 returned", (55.6 + 65.6), doubleValue, 1e-4);
+        AssertJUnit.assertEquals("Only one event must arrive", 1, count);
+        AssertJUnit.assertEquals("Value 1 returned", 30, intValue);
+        AssertJUnit.assertEquals("Value 2 returned", (55.6 + 65.6), doubleValue, 1e-4);
         siddhiAppRuntime.shutdown();
     }
 
@@ -163,9 +163,9 @@ public class RScriptTestCase {
         Thread.sleep(1000);
         inputHandler.send(new Object[]{40, false});
 
-        Assert.assertEquals("Only one event must arrive", 1, count);
-        Assert.assertEquals("Value 1 returned", (10 + 20 + 30) + 0.0, doubleValue, 1e-4);
-        Assert.assertEquals("Value 2 returned", true, boolValue);
+        AssertJUnit.assertEquals("Only one event must arrive", 1, count);
+        AssertJUnit.assertEquals("Value 1 returned", (10 + 20 + 30) + 0.0, doubleValue, 1e-4);
+        AssertJUnit.assertEquals("Value 2 returned", true, boolValue);
         siddhiAppRuntime.shutdown();
     }
 
