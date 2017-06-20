@@ -39,7 +39,7 @@ import java.util.Map;
 @Extension(
         name = "eval",
         namespace = "r",
-        description = "R source Stream processor",
+        description = "R script Stream processor",
         examples = @Example(description = "TBD", syntax = "TBD")
 )
 public class RScriptStreamProcessor extends RStreamProcessor {

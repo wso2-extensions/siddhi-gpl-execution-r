@@ -19,9 +19,9 @@
 package org.wso2.extension.siddhi.gpl.execution.rlang;
 
 import org.apache.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.testng.AssertJUnit;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.wso2.siddhi.core.SiddhiAppRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.event.Event;
@@ -44,7 +44,7 @@ public class RSourceTestCase {
     protected float valueFloat;
     protected long valueLong;
 
-    @Before
+    @BeforeMethod
     public void init() {
         count = 0;
     }
@@ -85,9 +85,9 @@ public class RSourceTestCase {
         Thread.sleep(2000);
         inputHandler.send(new Object[]{30L, 75.6d});
         Thread.sleep(500);
-        Assert.assertEquals("Only one event must arrive", 1, count);
-        Assert.assertEquals("Value 1 returned", 121.2, value1, 1e-4);
-        Assert.assertEquals("Value 2 returned", 30L, valueLong, 1e-4);
+        AssertJUnit.assertEquals("Only one event must arrive", 1, count);
+        AssertJUnit.assertEquals("Value 1 returned", 121.2, value1, 1e-4);
+        AssertJUnit.assertEquals("Value 2 returned", 30L, valueLong, 1e-4);
         siddhiAppRuntime.shutdown();
     }
 
@@ -127,9 +127,9 @@ public class RSourceTestCase {
         inputHandler.send(new Object[]{20L, 65.6d});
         inputHandler.send(new Object[]{30L, 75.6d});
         Thread.sleep(1000);
-        Assert.assertEquals("Only one event must arrive", 1, count);
-        Assert.assertEquals("Value 1 returned", 121, value1, 1e-4);
-        Assert.assertEquals("Value 2 returned", 30f, valueFloat);
+        AssertJUnit.assertEquals("Only one event must arrive", 1, count);
+        AssertJUnit.assertEquals("Value 1 returned", 121, value1, 1e-4);
+        AssertJUnit.assertEquals("Value 2 returned", 30f, valueFloat, 1e-4);
         siddhiAppRuntime.shutdown();
     }
 
@@ -168,9 +168,9 @@ public class RSourceTestCase {
         inputHandler.send(new Object[]{123L, 55.6d});
         inputHandler.send(new Object[]{101L, 72.3d});
         Thread.sleep(1000);
-        Assert.assertEquals("Only one event must arrive", 1, count);
-        Assert.assertEquals("Value 1 returned", "178.6", valueString);
-        Assert.assertEquals("Value 2 returned", true, valueBool);
+        AssertJUnit.assertEquals("Only one event must arrive", 1, count);
+        AssertJUnit.assertEquals("Value 1 returned", "178.6", valueString);
+        AssertJUnit.assertEquals("Value 2 returned", true, valueBool);
         siddhiAppRuntime.shutdown();
     }
 
