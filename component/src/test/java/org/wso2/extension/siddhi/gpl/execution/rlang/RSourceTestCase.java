@@ -29,8 +29,6 @@ import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.util.EventPrinter;
 
-import static org.junit.Assume.assumeTrue;
-
 public class RSourceTestCase {
 
     static final Logger LOG = Logger.getLogger(RSourceTestCase.class);
@@ -53,124 +51,124 @@ public class RSourceTestCase {
     @Test
     public void testRSource1() throws InterruptedException {
         LOG.info("r:evalSource test1");
-        assumeTrue(System.getenv("JRI_HOME") != null);
+        if (System.getenv("JRI_HOME") != null) {
+            String defineStream = "@config(async = 'true') define stream weather (time long, temp double); ";
 
-        String defineStream = "@config(async = 'true') define stream weather (time long, temp double); ";
+            String executionPlan = defineStream + " @info(name = 'query1') from weather#window.timeBatch(2 sec)" +
+                    "#r:evalSource(\"src/test/resources/sample.R\", \"m double, c long\"," +
+                    " time, temp)" +
+                    " select *" +
+                    " insert into dataOut;";
+            SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(executionPlan);
 
-        String executionPlan = defineStream + " @info(name = 'query1') from weather#window.timeBatch(2 sec)" +
-                "#r:evalSource(\"src/test/resources/sample.R\", \"m double, c long\"," +
-                " time, temp)" +
-                " select *" +
-                " insert into dataOut;";
-        SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(executionPlan);
-
-        siddhiAppRuntime.addCallback("query1", new QueryCallback() {
-            @Override
-            public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
-                EventPrinter.print(timeStamp, inEvents, removeEvents);
-                if (inEvents != null) {
-                    for (Event event : inEvents) {
-                        value1 = (Double) event.getData(2);
-                        valueLong = (Long) event.getData(3);
+            siddhiAppRuntime.addCallback("query1", new QueryCallback() {
+                @Override
+                public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
+                    EventPrinter.print(timeStamp, inEvents, removeEvents);
+                    if (inEvents != null) {
+                        for (Event event : inEvents) {
+                            value1 = (Double) event.getData(2);
+                            valueLong = (Long) event.getData(3);
+                        }
+                        count++;
                     }
-                    count++;
                 }
-            }
-        });
+            });
 
-        siddhiAppRuntime.start();
-        InputHandler inputHandler = siddhiAppRuntime.getInputHandler("weather");
-        inputHandler.send(new Object[]{10L, 55.6d});
-        inputHandler.send(new Object[]{20L, 65.6d});
-        Thread.sleep(5000);
-        inputHandler.send(new Object[]{30L, 75.6d});
-        Thread.sleep(500);
-        AssertJUnit.assertEquals("Only one event must arrive", 1, count);
-        AssertJUnit.assertEquals("Value 1 returned", 121.2, value1, 1e-4);
-        AssertJUnit.assertEquals("Value 2 returned", 30L, valueLong, 1e-4);
-        siddhiAppRuntime.shutdown();
+            siddhiAppRuntime.start();
+            InputHandler inputHandler = siddhiAppRuntime.getInputHandler("weather");
+            inputHandler.send(new Object[]{10L, 55.6d});
+            inputHandler.send(new Object[]{20L, 65.6d});
+            Thread.sleep(5000);
+            inputHandler.send(new Object[]{30L, 75.6d});
+            Thread.sleep(500);
+            AssertJUnit.assertEquals("Only one event must arrive", 1, count);
+            AssertJUnit.assertEquals("Value 1 returned", 121.2, value1, 1e-4);
+            AssertJUnit.assertEquals("Value 2 returned", 30L, valueLong, 1e-4);
+            siddhiAppRuntime.shutdown();
+        }
     }
 
     // get integer, float values to the output stream
     @Test
     public void testRSource2() throws InterruptedException {
         LOG.info("r:evalSource test2");
-        assumeTrue(System.getenv("JRI_HOME") != null);
+        if (System.getenv("JRI_HOME") != null) {
+            String defineStream = "@config(async = 'true') define stream weather (time long, temp double); ";
 
-        String defineStream = "@config(async = 'true') define stream weather (time long, temp double); ";
+            String executionPlan = defineStream + " @info(name = 'query1') from weather#window.lengthBatch(2)" +
+                    "#r:evalSource(\"src/test/resources/sample2.R\", \"m int, c float\", time, temp)" +
+                    " select *" +
+                    " insert into dataOut;";
+            SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(executionPlan);
 
-        String executionPlan = defineStream + " @info(name = 'query1') from weather#window.lengthBatch(2)" +
-                "#r:evalSource(\"src/test/resources/sample2.R\", \"m int, c float\", time, temp)" +
-                " select *" +
-                " insert into dataOut;";
-        SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(executionPlan);
+            siddhiAppRuntime.addCallback("query1", new QueryCallback() {
+                @Override
+                public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
+                    EventPrinter.print(timeStamp, inEvents, removeEvents);
+                    if (inEvents != null) {
 
-        siddhiAppRuntime.addCallback("query1", new QueryCallback() {
-            @Override
-            public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
-                EventPrinter.print(timeStamp, inEvents, removeEvents);
-                if (inEvents != null) {
-
-                    for (Event event : inEvents) {
-                        value1 = (Integer) event.getData(2);
-                        valueFloat = (Float) event.getData(3);
+                        for (Event event : inEvents) {
+                            value1 = (Integer) event.getData(2);
+                            valueFloat = (Float) event.getData(3);
+                        }
+                        count++;
                     }
-                    count++;
                 }
-            }
-        });
+            });
 
-        siddhiAppRuntime.start();
-        InputHandler inputHandler = siddhiAppRuntime.getInputHandler("weather");
-        inputHandler.send(new Object[]{10L, 55.6d});
-        inputHandler.send(new Object[]{20L, 65.6d});
-        inputHandler.send(new Object[]{30L, 75.6d});
-        Thread.sleep(1000);
-        AssertJUnit.assertEquals("Only one event must arrive", 1, count);
-        AssertJUnit.assertEquals("Value 1 returned", 121, value1, 1e-4);
-        AssertJUnit.assertEquals("Value 2 returned", 30f, valueFloat, 1e-4);
-        siddhiAppRuntime.shutdown();
+            siddhiAppRuntime.start();
+            InputHandler inputHandler = siddhiAppRuntime.getInputHandler("weather");
+            inputHandler.send(new Object[]{10L, 55.6d});
+            inputHandler.send(new Object[]{20L, 65.6d});
+            inputHandler.send(new Object[]{30L, 75.6d});
+            Thread.sleep(1000);
+            AssertJUnit.assertEquals("Only one event must arrive", 1, count);
+            AssertJUnit.assertEquals("Value 1 returned", 121, value1, 1e-4);
+            AssertJUnit.assertEquals("Value 2 returned", 30f, valueFloat, 1e-4);
+            siddhiAppRuntime.shutdown();
+        }
     }
 
     // get string, bool to the output stream
     @Test
     public void testRSource3() throws InterruptedException {
         LOG.info("r:evalSource test3");
-        assumeTrue(System.getenv("JRI_HOME") != null);
+        if (System.getenv("JRI_HOME") != null) {
+            String defineStream = "@config(async = 'true') define stream weather (time long, temp double); ";
 
-        String defineStream = "@config(async = 'true') define stream weather (time long, temp double); ";
+            String executionPlan = defineStream + " @info(name = 'query1') from weather#window.lengthBatch(2)" +
+                    "#r:evalSource(\"src/test/resources/sample3.R\", \"c string, m bool\"," +
+                    " time, temp)" +
+                    " select *" +
+                    " insert into dataOut;";
+            SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(executionPlan);
 
-        String executionPlan = defineStream + " @info(name = 'query1') from weather#window.lengthBatch(2)" +
-                "#r:evalSource(\"src/test/resources/sample3.R\", \"c string, m bool\"," +
-                " time, temp)" +
-                " select *" +
-                " insert into dataOut;";
-        SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(executionPlan);
+            siddhiAppRuntime.addCallback("query1", new QueryCallback() {
+                @Override
+                public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
+                    EventPrinter.print(timeStamp, inEvents, removeEvents);
+                    if (inEvents != null) {
 
-        siddhiAppRuntime.addCallback("query1", new QueryCallback() {
-            @Override
-            public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
-                EventPrinter.print(timeStamp, inEvents, removeEvents);
-                if (inEvents != null) {
-
-                    for (Event event : inEvents) {
-                        valueString = (String) event.getData(2);
-                        valueBool = (Boolean) event.getData(3);
+                        for (Event event : inEvents) {
+                            valueString = (String) event.getData(2);
+                            valueBool = (Boolean) event.getData(3);
+                        }
+                        count++;
                     }
-                    count++;
                 }
-            }
-        });
+            });
 
-        siddhiAppRuntime.start();
-        InputHandler inputHandler = siddhiAppRuntime.getInputHandler("weather");
-        inputHandler.send(new Object[]{123L, 55.6d});
-        inputHandler.send(new Object[]{101L, 72.3d});
-        Thread.sleep(1000);
-        AssertJUnit.assertEquals("Only one event must arrive", 1, count);
-        AssertJUnit.assertEquals("Value 1 returned", "178.6", valueString);
-        AssertJUnit.assertEquals("Value 2 returned", true, valueBool);
-        siddhiAppRuntime.shutdown();
+            siddhiAppRuntime.start();
+            InputHandler inputHandler = siddhiAppRuntime.getInputHandler("weather");
+            inputHandler.send(new Object[]{123L, 55.6d});
+            inputHandler.send(new Object[]{101L, 72.3d});
+            Thread.sleep(1000);
+            AssertJUnit.assertEquals("Only one event must arrive", 1, count);
+            AssertJUnit.assertEquals("Value 1 returned", "178.6", valueString);
+            AssertJUnit.assertEquals("Value 2 returned", true, valueBool);
+            siddhiAppRuntime.shutdown();
+        }
     }
 
 }

@@ -85,7 +85,8 @@
         <junit.version>4.10</junit.version>
         <testng.version>6.8</testng.version>
 
-        <env.JRI_HOME>/Library/Frameworks/R.framework/Versions/3.3/Resources/library/rJava/jri/</env.JRI_HOME>
+        <!-- for mac environments -->
+        <!--<env.JRI_HOME>/Library/Frameworks/R.framework/Versions/3.3/Resources/library/rJava/jri/</env.JRI_HOME>-->
 
         <mavan.findbugsplugin.exclude.file>findbugs-exclude.xml</mavan.findbugsplugin.exclude.file>
         <mavan.checkstyle.suppression.file>checkstyle-suppressions.xml</mavan.checkstyle.suppression.file>
