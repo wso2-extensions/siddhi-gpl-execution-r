@@ -80,7 +80,7 @@
     </dependencyManagement>
 
     <properties>
-        <siddhi.version>4.0.0-M7</siddhi.version>
+        <siddhi.version>4.0.0-M13</siddhi.version>
         <rjava.version>0.9.7.wso2v1</rjava.version>
         <junit.version>4.10</junit.version>
         <testng.version>6.8</testng.version>
