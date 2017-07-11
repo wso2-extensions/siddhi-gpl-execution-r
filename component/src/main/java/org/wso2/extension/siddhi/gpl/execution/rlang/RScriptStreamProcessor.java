@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class the R script for each event and produces  aggregated outputs based on the provided input variable
+ * This class the R script for each event and produces aggregated outputs based on the provided input variable
  * parameters and expected output attributes.
  */
 @Extension(
@@ -68,7 +68,8 @@ import java.util.Map;
                 type = {DataType.INT, DataType.LONG, DataType.FLOAT, DataType.DOUBLE, DataType.STRING,
                         DataType.STRING}),
         examples = @Example(
-                description = "TBD",
+                description = "This r script sums up the time and temp attribute values in the window and output the "
+                        + "result as c and m attributes in the output stream.",
                 syntax = "@info(name = 'query1')\n"
                         + "from weather#window.lengthBatch(2)#r:eval("
                         + "\"c <- sum(time); m <- sum(temp); \", \"c long, m double\", time, temp) \n"

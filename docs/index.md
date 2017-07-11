@@ -37,3 +37,7 @@ aggregated outputs based on the provided input variable parameters and expected 
 **We welcome your feedback and contribution.**
 
 Siddhi Stream Processor Team
+
+## API Docs:
+
+1. <a href="./api/4.0.2-SNAPSHOT.md">4.0.2-SNAPSHOT</a>
