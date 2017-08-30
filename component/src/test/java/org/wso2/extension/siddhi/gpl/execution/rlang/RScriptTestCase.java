@@ -51,7 +51,6 @@ public class RScriptTestCase {
         LOG.info("r:eval test1");
         if (System.getenv("JRI_HOME") != null) {
             String defineStream = "@config(async = 'true') define stream weather (time long, temp double); ";
-
             String executionPlan = defineStream + " @info(name = 'query1') from weather#window.lengthBatch(2)" +
                     "#r:eval(\"c <- sum(time); m <- sum(temp); \", \"c long, m double\"," +
                     " time, temp)" +
@@ -90,13 +89,11 @@ public class RScriptTestCase {
         LOG.info("r:eval test2");
         if (System.getenv("JRI_HOME") != null) {
             String defineStream = "@config(async = 'true') define stream weather (time int, temp double); ";
-
             String executionPlan = defineStream + " @info(name = 'query1') from weather#window.timeBatch(2 sec)" +
                     "#r:eval('c <- sum(time); m <- sum(temp); ', 'c int, m double', time, temp)" +
                     " select *" +
                     " insert into dataOut;";
             SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(executionPlan);
-
             siddhiAppRuntime.addCallback("query1", new QueryCallback() {
                 @Override
                 public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
@@ -111,7 +108,6 @@ public class RScriptTestCase {
                     }
                 }
             });
-
             siddhiAppRuntime.start();
             InputHandler inputHandler = siddhiAppRuntime.getInputHandler("weather");
             inputHandler.send(new Object[]{10, 55.6});
@@ -131,7 +127,6 @@ public class RScriptTestCase {
         LOG.info("r:eval test3");
         if (System.getenv("JRI_HOME") != null) {
             String defineStream = "@config(async = 'true') define stream weather (time int, temp bool); ";
-
             String executionPlan = defineStream + " @info(name = 'query1') from weather#window.lengthBatch(3)" +
                     "#r:eval(\"c <- sum(time); m <- any(temp); \", \"c double, m bool\"," +
                     " time, temp)" +
@@ -152,7 +147,6 @@ public class RScriptTestCase {
                     }
                 }
             });
-
             siddhiAppRuntime.start();
             InputHandler inputHandler = siddhiAppRuntime.getInputHandler("weather");
             inputHandler.send(new Object[]{10, true});
@@ -160,7 +154,6 @@ public class RScriptTestCase {
             inputHandler.send(new Object[]{30, true});
             Thread.sleep(1000);
             inputHandler.send(new Object[]{40, false});
-
             AssertJUnit.assertEquals("Only one event must arrive", 1, count);
             AssertJUnit.assertEquals("Value 1 returned", (10 + 20 + 30) + 0.0, doubleValue, 1e-4);
             AssertJUnit.assertEquals("Value 2 returned", true, boolValue);

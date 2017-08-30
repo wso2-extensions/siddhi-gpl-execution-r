@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class the R script for each event and produces  aggregated outputs based on the provided input variable
+ * This class runs R script for each event and produces aggregated outputs based on the provided input variable
  * parameters and expected output attributes.
  */
 @Extension(
