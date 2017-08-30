@@ -72,7 +72,8 @@ import java.util.Map;
                 type = {DataType.INT, DataType.LONG, DataType.FLOAT, DataType.DOUBLE, DataType.STRING,
                         DataType.STRING}),
         examples = @Example(
-                description = "TBD",
+                description = "This r source function takes in a r script file location and computes the output as "
+                        + "defined in the file.",
                 syntax = "@info(name = 'query1')\n"
                         + "from weather#window.lengthBatch(2)#r:evalSource(\"src/test/resources/sample2.R\", \"m int, "
                         + "c float\", time, temp)\n"
