@@ -1,4 +1,4 @@
-site_name: Siddhi-GPL-EXECUTION-R
+site_name: Siddhi-Gpl-Execution-R
 extra_css:
 - stylesheets/extra.css
 extra_javascript:
@@ -9,12 +9,14 @@ extra:
   palette:
     primary: teal
     accent: teal
+google_analytics:
+- UA-103065-28
+- auto
 pages:
-- Welcome to WSO2 Siddhi IO TCP: index.md
-- About:
-  - License: about/license.md
-- Api:
-  - 4.0.2-SNAPSHOT: api/4.0.2-SNAPSHOT.md
+- Welcome to WSO2 Siddhi Gpl Execution R: index.md
+- API Docs: null
+- License: license.md
 - API Docs:
+  - 4.0.1-SNAPSHOT: api/4.0.1-SNAPSHOT.md
   - 4.0.2-SNAPSHOT: api/4.0.2-SNAPSHOT.md
 theme: material
