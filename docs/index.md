@@ -1,7 +1,7 @@
 siddhi-gpl-execution-r
 ======================================
 
-The **siddhi-gpl-execution-r extension** is an extension to <a target="_blank" href="https://wso2.github.io/siddhi">Siddhi</a> that  can be used to process events with R scripts.
+The **siddhi-gpl-execution-r extension** is an extension to <a target="_blank" href="https://wso2.github.io/siddhi">Siddhi</a> that can be used to process events with R scripts.
 
 Find some useful links below:
 
