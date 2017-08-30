@@ -27,7 +27,7 @@
 
     <groupId>org.wso2.extension.siddhi.gpl.execution.r</groupId>
     <artifactId>siddhi-gpl-execution-r-parent</artifactId>
-    <version>4.0.1-SNAPSHOT</version>
+    <version>4.0.2-SNAPSHOT</version>
     <name>Siddhi Execution Extension - R Aggregator Parent</name>
 
     <profiles>

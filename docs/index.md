@@ -11,9 +11,35 @@ Find some useful links below:
 
 ## Latest API Docs 
 
-Latest API Docs is <a target="_blank" href="https://wso2-extensions.github.io/siddhi-gpl-execution-r/api/4.0.1-SNAPSHOT">4.0.1-SNAPSHOT</a>.
+Latest API Docs is <a target="_blank" href="https://wso2-extensions.github.io/siddhi-gpl-execution-r/api/4.0.2-SNAPSHOT">4.0.2-SNAPSHOT</a>.
 
 ## How to use 
+
+**Prerequisites for using the feature**
+
+***For Linux***
+   - [Download](https://cran.r-project.org/mirrors.html) and install R
+   - Install JRI.
+   - Add R_HOME and JRI_HOME as environment variables and export
+
+***For UNIX***
+   - [Download](https://cran.r-project.org/mirrors.html) and install R
+   - Verify whether the R installation is successful by typing command "R" in a new terminal.
+   - Install JRI.
+    - In R console, install using the following command :
+        install.packages(‘rJava’, repos='http://cran.us.r-project.org')
+    - This will download the rJava package, and the downloaded location will be shown in the R console
+    - In the UNIX terminal, type R CMD INSTALL {{location of downloaded file}}.
+    - Above command will install JRI in the system.
+   - Set environment variables
+    - Get R_home location via R console using : R.home(component="home").
+    - This will result in somewhat equal to /Library/Frameworks/R.framework/Resources
+    - Add the above result to an environment variable: R_HOME
+    - export the variable: export R_HOME
+    - JRI location will be in a similar location to:
+        /Library/Frameworks/R.framework/Versions/3.3/Resources/library/rJava/jri/
+    - Add the above result to an environment variable: JRI_HOME
+    - export JRI_HOME
 
 **Using the extension in <a target="_blank" href="https://github.com/wso2/product-sp">WSO2 Stream Processor</a>**
 
@@ -45,8 +71,8 @@ Latest API Docs is <a target="_blank" href="https://wso2-extensions.github.io/si
 
 ## Features
 
-* <a target="_blank" href="https://wso2-extensions.github.io/siddhi-gpl-execution-r/api/4.0.1-SNAPSHOT/#eval-stream-processor">eval</a> *(<a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#stream-processors">Stream Processor</a>)*<br><div style="padding-left: 1em;"><p>R script Stream processor. This extension runs the R script loaded from a file to each event and produces aggregated outputs based on the provided input variable parameters and expected output attributes.</p></div>
-* <a target="_blank" href="https://wso2-extensions.github.io/siddhi-gpl-execution-r/api/4.0.1-SNAPSHOT/#evalsource-stream-processor">evalSource</a> *(<a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#stream-processors">Stream Processor</a>)*<br><div style="padding-left: 1em;"><p>R source Stream processor. This extension the R script loaded from a file to each event and produces aggregated outputs based on the provided input variable parameters and expected output attributes.</p></div>
+* <a target="_blank" href="https://wso2-extensions.github.io/siddhi-gpl-execution-r/api/4.0.2-SNAPSHOT/#eval-stream-processor">eval</a> *(<a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#stream-processors">Stream Processor</a>)*<br><div style="padding-left: 1em;"><p>R script Stream processor. This extension runs the R script loaded from a file to each event and produces aggregated outputs based on the provided input variable parameters and expected output attributes.</p></div>
+* <a target="_blank" href="https://wso2-extensions.github.io/siddhi-gpl-execution-r/api/4.0.2-SNAPSHOT/#evalsource-stream-processor">evalSource</a> *(<a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#stream-processors">Stream Processor</a>)*<br><div style="padding-left: 1em;"><p>R source Stream processor. This extension the R script loaded from a file to each event and produces aggregated outputs based on the provided input variable parameters and expected output attributes.</p></div>
 
 ## How to Contribute
  

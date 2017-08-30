@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.wso2.extension.siddhi.gpl.execution.r</groupId>
         <artifactId>siddhi-gpl-execution-r-parent</artifactId>
-        <version>4.0.1-SNAPSHOT</version>
+        <version>4.0.2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -80,7 +80,11 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
+                        <Private-Package>
+                            org.rosuda.*
+                        </Private-Package>
                         <Export-Package>
+                            !org.rosuda.*,
                             org.wso2.extension.siddhi.gpl.execution.rlang.*
                         </Export-Package>
                         <Import-Package>
