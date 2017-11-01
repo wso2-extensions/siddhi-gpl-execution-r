@@ -1,8 +1,8 @@
-# API Docs
+# API Docs - v4.0.4-SNAPSHOT
 
 ## R
 
-### eval *(<a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#stream-processors">Stream Processor</a>)*
+### eval *<a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#stream-processor">(Stream Processor)</a>*
 
 <p style="word-wrap: break-word">R script Stream processor. This extension runs the R script loaded from a file to each event and produces aggregated outputs based on the provided input variable parameters and expected output attributes.</p>
 
@@ -70,7 +70,7 @@ insert into dataOut;
 ```
 <p style="word-wrap: break-word">TBD</p>
 
-### evalSource *(<a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#stream-processors">Stream Processor</a>)*
+### evalSource *<a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#stream-processor">(Stream Processor)</a>*
 
 <p style="word-wrap: break-word">R source Stream processor. This extension the R script loaded from a file to each event and produces aggregated outputs based on the provided input variable parameters and expected output attributes.</p>
 

@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.wso2.extension.siddhi.gpl.execution.r</groupId>
         <artifactId>siddhi-gpl-execution-r-parent</artifactId>
-        <version>4.0.2-SNAPSHOT</version>
+        <version>4.0.4-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -53,25 +53,34 @@
             <artifactId>testng</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.jacoco</groupId>
-            <artifactId>org.jacoco.agent</artifactId>
-            <classifier>runtime</classifier>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>documentation-deploy</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.wso2.siddhi</groupId>
+                        <artifactId>siddhi-doc-gen</artifactId>
+                        <version>${siddhi.version}</version>
+                        <executions>
+                            <execution>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>deploy-mkdocs-github-pages</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <suiteXmlFiles>
-                        <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
-                    </suiteXmlFiles>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -105,8 +114,30 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <suiteXmlFiles>
+                        <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
+                    </suiteXmlFiles>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.wso2.siddhi</groupId>
+                <artifactId>siddhi-doc-gen</artifactId>
+                <version>${siddhi.version}</version>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>generate-md-docs</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
