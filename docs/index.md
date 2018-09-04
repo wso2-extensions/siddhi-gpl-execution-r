@@ -11,7 +11,7 @@ Find some useful links below:
 
 ## Latest API Docs 
 
-Latest API Docs is <a target="_blank" href="https://wso2-extensions.github.io/siddhi-gpl-execution-r/api/4.0.12">4.0.12</a>.
+Latest API Docs is <a target="_blank" href="https://wso2-extensions.github.io/siddhi-gpl-execution-r/api/4.0.13">4.0.13</a>.
 
 ## How to use 
 
@@ -71,8 +71,8 @@ Latest API Docs is <a target="_blank" href="https://wso2-extensions.github.io/si
 
 ## Features
 
-* <a target="_blank" href="https://wso2-extensions.github.io/siddhi-gpl-execution-r/api/4.0.12/#eval-stream-processor">eval</a> *<a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#stream-processor">(Stream Processor)</a>*<br><div style="padding-left: 1em;"><p>R script Stream processor. This extension runs the R script loaded from a file to each event and produces aggregated outputs based on the provided input variable parameters and expected output attributes.</p></div>
-* <a target="_blank" href="https://wso2-extensions.github.io/siddhi-gpl-execution-r/api/4.0.12/#evalsource-stream-processor">evalSource</a> *<a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#stream-processor">(Stream Processor)</a>*<br><div style="padding-left: 1em;"><p>R source Stream processor. This extension the R script loaded from a file to each event and produces aggregated outputs based on the provided input variable parameters and expected output attributes.</p></div>
+* <a target="_blank" href="https://wso2-extensions.github.io/siddhi-gpl-execution-r/api/4.0.13/#eval-stream-processor">eval</a> *<a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#stream-processor">(Stream Processor)</a>*<br><div style="padding-left: 1em;"><p>R script Stream processor. This extension runs the R script loaded from a file to each event and produces aggregated outputs based on the provided input variable parameters and expected output attributes.</p></div>
+* <a target="_blank" href="https://wso2-extensions.github.io/siddhi-gpl-execution-r/api/4.0.13/#evalsource-stream-processor">evalSource</a> *<a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#stream-processor">(Stream Processor)</a>*<br><div style="padding-left: 1em;"><p>R source Stream processor. This extension the R script loaded from a file to each event and produces aggregated outputs based on the provided input variable parameters and expected output attributes.</p></div>
 
 ## How to Contribute
  
