@@ -42,7 +42,7 @@ import java.util.Map;
 @Extension(
         name = "eval",
         namespace = "r",
-        description = "R script Stream processor. This extension runs the R script loaded from a file to each event "
+        description = "R Script Stream Processor. This extension runs the R script loaded from a file to each event "
                 + "and produces aggregated outputs based on the provided input variable parameters and expected "
                 + "output attributes.",
         parameters = {
