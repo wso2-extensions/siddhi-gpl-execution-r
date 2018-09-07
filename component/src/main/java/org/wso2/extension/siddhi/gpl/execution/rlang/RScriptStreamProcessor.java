@@ -42,29 +42,31 @@ import java.util.Map;
 @Extension(
         name = "eval",
         namespace = "r",
-        description = "R Script Stream Processor. This extension runs the R script loaded from a file to each event "
-                + "and produces aggregated outputs based on the provided input variable parameters and expected "
+        description = "The R Script Stream Processor runs the R script loaded from a file to each event "
+                + "and produces aggregated outputs based on the input variable parameters provided and the expected "
                 + "output attributes.",
         parameters = {
                 @Parameter(name = "script",
-                           description = "R script as a string produces aggregated outputs based on the provided input "
-                                   + "variable parameters and expected output attributes",
+                           description = "The R script as a string which  produces aggregated outputs based on the " +
+                                   "provided input variable parameters and the expected output attributes",
                            type = {DataType.STRING}),
                 @Parameter(name = "output.attributes",
-                           description = "A set of output attributes separated by commas as string. Each attribute is "
-                                   + "denoted as <name><space><type>. e.g., 'output1 string, output2 long'",
+                           description = "The  expected set of output attributes. These can be provided as a " +
+                                   "comma-separated list. Each attribute is denoted as '<name><space><type>'." +
+                                   " e.g., 'output1 string, output2 long'.",
                            type = {DataType.INT, DataType.LONG, DataType.FLOAT, DataType.DOUBLE, DataType.STRING,
                                    DataType.STRING}),
                 @Parameter(name = "input.attributes",
-                           description = "A set of input attributes separated by commas after output attributes. "
+                           description = "A set of input attributes to be considered when generating the expected " +
+                                   "output. This can be provided as a comma-separated list after output attributes. "
                                    + "e.g., 'att1, att2'",
                            type = {DataType.INT, DataType.LONG, DataType.FLOAT, DataType.DOUBLE, DataType.STRING,
                                    DataType.STRING})
         },
         returnAttributes = @ReturnAttribute(
                 name = "outputParameters",
-                description = "This runs the R script for each event and produces  aggregated outputs based on the "
-                        + "provided input variable parameters and expected output attributes.",
+                description = "This runs the R script for each event and produces aggregated outputs based on the "
+                        + "provided input variable parameters and the expected output attributes.",
                 type = {DataType.INT, DataType.LONG, DataType.FLOAT, DataType.DOUBLE, DataType.STRING,
                         DataType.STRING}),
         examples = @Example(

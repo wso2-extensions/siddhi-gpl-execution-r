@@ -1,10 +1,10 @@
-# API Docs - v4.0.12
+# API Docs - v4.0.13-SNAPSHOT
 
 ## R
 
 ### eval *<a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#stream-processor">(Stream Processor)</a>*
 
-<p style="word-wrap: break-word">R script Stream processor. This extension runs the R script loaded from a file to each event and produces aggregated outputs based on the provided input variable parameters and expected output attributes.</p>
+<p style="word-wrap: break-word">The R Script Stream Processor runs the R script loaded from a file to each event and produces aggregated outputs based on the input variable parameters provided and the expected output attributes.</p>
 
 <span id="syntax" class="md-typeset" style="display: block; font-weight: bold;">Syntax</span>
 ```
@@ -23,7 +23,7 @@ r:eval(<STRING> script, <INT|LONG|FLOAT|DOUBLE|STRING|STRING> output.attributes,
     </tr>
     <tr>
         <td style="vertical-align: top">script</td>
-        <td style="vertical-align: top; word-wrap: break-word">R script as a string produces aggregated outputs based on the provided input variable parameters and expected output attributes</td>
+        <td style="vertical-align: top; word-wrap: break-word">The R script as a string which  produces aggregated outputs based on the provided input variable parameters and the expected output attributes</td>
         <td style="vertical-align: top"></td>
         <td style="vertical-align: top">STRING</td>
         <td style="vertical-align: top">No</td>
@@ -31,7 +31,7 @@ r:eval(<STRING> script, <INT|LONG|FLOAT|DOUBLE|STRING|STRING> output.attributes,
     </tr>
     <tr>
         <td style="vertical-align: top">output.attributes</td>
-        <td style="vertical-align: top; word-wrap: break-word">A set of output attributes separated by commas as string. Each attribute is denoted as &lt;name&gt;&lt;space&gt;&lt;type&gt;. e.g., 'output1 string, output2 long'</td>
+        <td style="vertical-align: top; word-wrap: break-word">The  expected set of output attributes. These can be provided as a comma-separated list. Each attribute is denoted as '&lt;name&gt;&lt;space&gt;&lt;type&gt;'. e.g., 'output1 string, output2 long'.</td>
         <td style="vertical-align: top"></td>
         <td style="vertical-align: top">INT<br>LONG<br>FLOAT<br>DOUBLE<br>STRING<br>STRING</td>
         <td style="vertical-align: top">No</td>
@@ -39,7 +39,7 @@ r:eval(<STRING> script, <INT|LONG|FLOAT|DOUBLE|STRING|STRING> output.attributes,
     </tr>
     <tr>
         <td style="vertical-align: top">input.attributes</td>
-        <td style="vertical-align: top; word-wrap: break-word">A set of input attributes separated by commas after output attributes. e.g., 'att1, att2'</td>
+        <td style="vertical-align: top; word-wrap: break-word">A set of input attributes to be considered when generating the expected output. This can be provided as a comma-separated list after output attributes. e.g., 'att1, att2'</td>
         <td style="vertical-align: top"></td>
         <td style="vertical-align: top">INT<br>LONG<br>FLOAT<br>DOUBLE<br>STRING<br>STRING</td>
         <td style="vertical-align: top">No</td>
@@ -55,7 +55,7 @@ r:eval(<STRING> script, <INT|LONG|FLOAT|DOUBLE|STRING|STRING> output.attributes,
     </tr>
     <tr>
         <td style="vertical-align: top">outputParameters</td>
-        <td style="vertical-align: top; word-wrap: break-word">This runs the R script for each event and produces  aggregated outputs based on the provided input variable parameters and expected output attributes.</td>
+        <td style="vertical-align: top; word-wrap: break-word">This runs the R script for each event and produces aggregated outputs based on the provided input variable parameters and the expected output attributes.</td>
         <td style="vertical-align: top">INT<br>LONG<br>FLOAT<br>DOUBLE<br>STRING<br>STRING</td>
     </tr>
 </table>
