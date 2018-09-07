@@ -68,13 +68,14 @@ import java.util.Map;
                 description = "The output parameters returned once the R script is run for each event.",
                 type = {DataType.INT, DataType.LONG, DataType.FLOAT, DataType.DOUBLE, DataType.STRING,
                         DataType.STRING}),
-        examples = @Example(
-                description = "TBD",
-                syntax = "@info(name = 'query1')\n"
+        examples = @Example(syntax = "@info(name = 'query1')\n"
                         + "from weather#window.lengthBatch(2)#r:eval("
                         + "\"c <- sum(time); m <- sum(temp); \", \"c long, m double\", time, temp) \n"
                         + "select * \n"
-                        + "insert into dataOut;")
+                        + "insert into dataOut;",
+                description = "This query runs the R script 'c <- sum(time); m <- sum(temp);' for every two events in" +
+                        " a tumbling manner. Values are derived for two output parameters named 'c' and 'm' by " +
+                        "considering the values of two other parameters named 'time' and 'temp' as the input ")
 )
 public class RScriptStreamProcessor extends RStreamProcessor {
 
