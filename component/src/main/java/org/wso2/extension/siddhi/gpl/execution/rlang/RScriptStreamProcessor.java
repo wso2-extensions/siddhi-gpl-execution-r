@@ -42,9 +42,9 @@ import java.util.Map;
 @Extension(
         name = "eval",
         namespace = "r",
-        description = "The R Script Stream Processor runs the R script loaded from a file to each event "
-                + "and produces aggregated outputs based on the input variable parameters provided and the expected "
-                + "output attributes.",
+        description = "The R Script Stream Processor runs the R script defined within the Siddhi application " +
+                "to each event and produces aggregated outputs based on the input variable parameters provided and " +
+                "the expected output attributes.",
         parameters = {
                 @Parameter(name = "script",
                            description = "The R script as a string which  produces aggregated outputs based on the " +
