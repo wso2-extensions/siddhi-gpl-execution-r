@@ -23,23 +23,23 @@ Latest API Docs is <a target="_blank" href="https://wso2-extensions.github.io/si
    - Add R_HOME and JRI_HOME as environment variables and export
 
 ***For UNIX***
-   - [Download](https://cran.r-project.org/mirrors.html) and install R
-   - Verify whether the R installation is successful by typing command "R" in a new terminal.
-   - Install JRI.
-    - In R console, install using the following command :
-        install.packages(?rJava?, repos='http://cran.us.r-project.org')
-    - This will download the rJava package, and the downloaded location will be shown in the R console
-    - In the UNIX terminal, type R CMD INSTALL {{location of downloaded file}}.
-    - Above command will install JRI in the system.
-   - Set environment variables
-    - Get R_home location via R console using : R.home(component="home").
-    - This will result in somewhat equal to /Library/Frameworks/R.framework/Resources
-    - Add the above result to an environment variable: R_HOME
-    - export the variable: export R_HOME
-    - JRI location will be in a similar location to:
-        /Library/Frameworks/R.framework/Versions/3.3/Resources/library/rJava/jri/
-    - Add the above result to an environment variable: JRI_HOME
-    - export JRI_HOME
+   1. [Download](https://cran.r-project.org/mirrors.html) and install R.
+   2. Verify whether the R installation is successful by typing command `R` in a new terminal.
+   3. Install JRI.<br>
+    a. In R console, install by issuing the following command:<br/>
+        `install.packages(?rJava?, repos='http://cran.us.r-project.org')`
+       This downloads the `rJava package`, and the downloaded location is shown in the R console.
+    b. In the UNIX terminal, type `R CMD INSTALL {{location of downloaded file}}`.
+       This installs JRI in the system.
+    c. Set the environment variables.
+    d. Get the R_home location via the R console by issuing the following command:</br> `R.home(component="home")`</br>
+       The output should be similar\ to `/Library/Frameworks/R.framework/Resources`.
+    e. Add the above result to an environment variable by issuing the following command:</br> `R_HOME`
+    f. To export the variable, issue the following command:</br> `export R_HOME`
+       JRI location should be a location similar to the following:</br>
+       `/Library/Frameworks/R.framework/Versions/3.3/Resources/library/rJava/jri/`
+    g. Add the above result to an environment variable by issuing the following command:</br> `JRI_HOME`
+    h. Export the `JRI_HOME`.
 
 **Using the extension in <a target="_blank" href="https://github.com/wso2/product-sp">WSO2 Stream Processor</a>**
 
