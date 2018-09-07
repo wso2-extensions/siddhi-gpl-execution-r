@@ -59,14 +59,13 @@ import java.util.Map;
                 @Parameter(name = "input.attributes",
                            description = "A set of input attributes to be considered when generating the expected " +
                                    "output. This can be provided as a comma-separated list after output attributes. "
-                                   + "e.g., 'att1, att2'",
+                                   + "e.g., 'att1, att2'.",
                            type = {DataType.INT, DataType.LONG, DataType.FLOAT, DataType.DOUBLE, DataType.STRING,
                                    DataType.STRING})
         },
         returnAttributes = @ReturnAttribute(
                 name = "outputParameters",
-                description = "This runs the R script for each event and produces aggregated outputs based on the "
-                        + "provided input variable parameters and the expected output attributes.",
+                description = "The output parameters returned once the R script is run for each event.",
                 type = {DataType.INT, DataType.LONG, DataType.FLOAT, DataType.DOUBLE, DataType.STRING,
                         DataType.STRING}),
         examples = @Example(
