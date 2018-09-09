@@ -75,7 +75,7 @@ import java.util.Map;
                         + "insert into dataOut;",
                 description = "This query runs the R script 'c <- sum(time); m <- sum(temp);' for every two events in" +
                         " a tumbling manner. Values are derived for two output parameters named 'c' and 'm' by " +
-                        "considering the values of two other parameters named 'time' and 'temp' as the input ")
+                        "considering the values of two other parameters named 'time' and 'temp' as the input. ")
 )
 public class RScriptStreamProcessor extends RStreamProcessor {
 
