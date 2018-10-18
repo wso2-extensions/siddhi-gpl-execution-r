@@ -1,4 +1,4 @@
-# API Docs - v4.0.13
+# API Docs - v4.0.14-SNAPSHOT
 
 ## R
 
@@ -68,7 +68,7 @@ from weather#window.lengthBatch(2)#r:eval("c <- sum(time); m <- sum(temp); ", "c
 select * 
 insert into dataOut;
 ```
-<p style="word-wrap: break-word">TBD</p>
+<p style="word-wrap: break-word">This query runs the R script 'c &lt;- sum(time); m &lt;- sum(temp);' for every two events in a tumbling manner. Values are derived for two output parameters named 'c' and 'm' by considering the values of two other parameters named 'time' and 'temp' as the input. </p>
 
 ### evalSource *<a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#stream-processor">(Stream Processor)</a>*
 
@@ -136,5 +136,5 @@ from weather#window.lengthBatch(2)#r:evalSource("src/test/resources/sample2.R", 
 select *
 insert into dataOut;
 ```
-<p style="word-wrap: break-word">This r source function takes in a r script file location and computes the output as defined in the file.</p>
+<p style="word-wrap: break-word">This 'r' source function takes in a 'r' script file location and computes the output as defined in the file.</p>
 
