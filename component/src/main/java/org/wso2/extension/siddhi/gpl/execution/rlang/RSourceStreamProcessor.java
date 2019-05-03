@@ -18,26 +18,30 @@
 
 package org.wso2.extension.siddhi.gpl.execution.rlang;
 
-import org.wso2.siddhi.annotation.Example;
-import org.wso2.siddhi.annotation.Extension;
-import org.wso2.siddhi.annotation.Parameter;
-import org.wso2.siddhi.annotation.ReturnAttribute;
-import org.wso2.siddhi.annotation.util.DataType;
-import org.wso2.siddhi.core.config.SiddhiAppContext;
-import org.wso2.siddhi.core.exception.SiddhiAppCreationException;
-import org.wso2.siddhi.core.executor.ConstantExpressionExecutor;
-import org.wso2.siddhi.core.executor.ExpressionExecutor;
-import org.wso2.siddhi.core.executor.VariableExpressionExecutor;
-import org.wso2.siddhi.core.util.config.ConfigReader;
-import org.wso2.siddhi.query.api.definition.AbstractDefinition;
-import org.wso2.siddhi.query.api.definition.Attribute;
+import io.siddhi.annotation.Example;
+import io.siddhi.annotation.Extension;
+import io.siddhi.annotation.Parameter;
+import io.siddhi.annotation.ReturnAttribute;
+import io.siddhi.annotation.util.DataType;
+import io.siddhi.core.config.SiddhiQueryContext;
+import io.siddhi.core.event.stream.MetaStreamEvent;
+import io.siddhi.core.event.stream.holder.StreamEventClonerHolder;
+import io.siddhi.core.exception.SiddhiAppCreationException;
+import io.siddhi.core.executor.ConstantExpressionExecutor;
+import io.siddhi.core.executor.ExpressionExecutor;
+import io.siddhi.core.executor.VariableExpressionExecutor;
+import io.siddhi.core.query.processor.ProcessingMode;
+import io.siddhi.core.util.config.ConfigReader;
+import io.siddhi.core.util.snapshot.state.State;
+import io.siddhi.core.util.snapshot.state.StateFactory;
+import io.siddhi.query.api.definition.AbstractDefinition;
+import io.siddhi.query.api.definition.Attribute;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This class runs the R script loaded from a file to each event and produces aggregated outputs based on the provided
@@ -82,15 +86,24 @@ import java.util.Map;
                 + "defined in the file."
         )
 )
-public class RSourceStreamProcessor extends RStreamProcessor {
+public class RSourceStreamProcessor extends RStreamProcessor<State> {
+
+    private List<Attribute> attributes;
+
     @Override
-    protected List<Attribute> init(AbstractDefinition abstractDefinition, ExpressionExecutor[] expressionExecutors,
-                                   ConfigReader configReader, SiddhiAppContext siddhiAppContext) {
+    protected StateFactory<State> init(MetaStreamEvent metaStreamEvent,
+                                       AbstractDefinition abstractDefinition,
+                                       ExpressionExecutor[] attributeExpressionExecutors,
+                                       ConfigReader configReader,
+                                       StreamEventClonerHolder streamEventClonerHolder,
+                                       boolean b,
+                                       boolean b1,
+                                       SiddhiQueryContext siddhiQueryContext) {
         if (attributeExpressionExecutors.length < 2) {
             throw new SiddhiAppCreationException("Wrong number of attributes given. Expected 2 or more, found " +
-                                                         attributeExpressionLength
-                                                         + "Usage: #R:evalSource(filePath:string, "
-                                                         + "outputVariables:string, input1, ...)");
+                    attributeExpressionLength
+                    + "Usage: #R:evalSource(filePath:string, "
+                    + "outputVariables:string, input1, ...)");
         }
         String scriptString;
         String filePath;
@@ -103,10 +116,10 @@ public class RSourceStreamProcessor extends RStreamProcessor {
             filePath = (String) attributeExpressionExecutors[0].execute(null);
         } catch (ClassCastException e) {
             throw new SiddhiAppCreationException("First parameter should be of type string. Found " +
-                                                         attributeExpressionExecutors[0].execute(null).getClass()
-                                                                 .getCanonicalName() + "\n" +
-                                                         "Usage: #R:evalSource(filePath:string, "
-                                                         + "outputVariables:string, input1, ...)");
+                    attributeExpressionExecutors[0].execute(null).getClass()
+                            .getCanonicalName() + "\n" +
+                    "Usage: #R:evalSource(filePath:string, "
+                    + "outputVariables:string, input1, ...)");
         }
         try {
             if (!(attributeExpressionExecutors[1] instanceof ConstantExpressionExecutor)) {
@@ -115,10 +128,10 @@ public class RSourceStreamProcessor extends RStreamProcessor {
             outputString = (String) attributeExpressionExecutors[1].execute(null);
         } catch (ClassCastException e) {
             throw new SiddhiAppCreationException("Second parameter should be of type string. Found " +
-                                                         attributeExpressionExecutors[1].execute(null).getClass()
-                                                                 .getCanonicalName() + "\n" +
-                                                         "Usage: #R:evalSource(filePath:string, "
-                                                         + "outputVariables:string, input1, ...)");
+                    attributeExpressionExecutors[1].execute(null).getClass()
+                            .getCanonicalName() + "\n" +
+                    "Usage: #R:evalSource(filePath:string, "
+                    + "outputVariables:string, input1, ...)");
         }
 
         for (int i = 2; i < attributeExpressionLength; i++) {
@@ -135,14 +148,17 @@ public class RSourceStreamProcessor extends RStreamProcessor {
         } catch (SecurityException e) {
             throw new SiddhiAppCreationException("Access denied while reading R source file", e);
         }
-        return initialize(scriptString, outputString);
-    }
-
-    @Override public Map<String, Object> currentState() {
+        attributes = initialize(scriptString, outputString);
         return null;
     }
 
-    @Override public void restoreState(Map<String, Object> map) {
+    @Override
+    public List<Attribute> getReturnAttributes() {
+        return attributes;
+    }
 
+    @Override
+    public ProcessingMode getProcessingMode() {
+        return ProcessingMode.BATCH;
     }
 }

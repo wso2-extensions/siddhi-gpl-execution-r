@@ -18,7 +18,21 @@
 
 package org.wso2.extension.siddhi.gpl.execution.rlang;
 
-import org.apache.log4j.Logger;
+import io.siddhi.core.event.ComplexEvent;
+import io.siddhi.core.event.ComplexEventChunk;
+import io.siddhi.core.event.stream.StreamEvent;
+import io.siddhi.core.event.stream.StreamEventCloner;
+import io.siddhi.core.event.stream.populater.ComplexEventPopulater;
+import io.siddhi.core.exception.SiddhiAppCreationException;
+import io.siddhi.core.exception.SiddhiAppRuntimeException;
+import io.siddhi.core.executor.ExpressionExecutor;
+import io.siddhi.core.query.processor.Processor;
+import io.siddhi.core.query.processor.stream.StreamProcessor;
+import io.siddhi.core.util.snapshot.state.State;
+import io.siddhi.query.api.definition.Attribute;
+import io.siddhi.query.api.definition.StreamDefinition;
+import io.siddhi.query.compiler.SiddhiCompiler;
+import io.siddhi.query.compiler.exception.SiddhiParserException;
 import org.rosuda.REngine.JRI.JRIEngine;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPDouble;
@@ -29,44 +43,34 @@ import org.rosuda.REngine.REXPString;
 import org.rosuda.REngine.REngine;
 import org.rosuda.REngine.REngineException;
 import org.rosuda.REngine.RList;
-import org.wso2.siddhi.core.event.ComplexEvent;
-import org.wso2.siddhi.core.event.ComplexEventChunk;
-import org.wso2.siddhi.core.event.stream.StreamEvent;
-import org.wso2.siddhi.core.event.stream.StreamEventCloner;
-import org.wso2.siddhi.core.event.stream.populater.ComplexEventPopulater;
-import org.wso2.siddhi.core.exception.SiddhiAppCreationException;
-import org.wso2.siddhi.core.exception.SiddhiAppRuntimeException;
-import org.wso2.siddhi.core.executor.ExpressionExecutor;
-import org.wso2.siddhi.core.query.processor.Processor;
-import org.wso2.siddhi.core.query.processor.stream.StreamProcessor;
-import org.wso2.siddhi.query.api.definition.Attribute;
-import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.compiler.SiddhiCompiler;
-import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Abstract class which is extended by RScriptStreamProcessor and RSourceStreamProcessor
+ *
+ * @param <S> the State parameter to hold the states that outlive the class that created it.
  */
-public abstract class RStreamProcessor extends StreamProcessor {
+public abstract class RStreamProcessor<S extends State> extends StreamProcessor<S> {
 
-    List<Attribute> inputAttributes = new ArrayList<Attribute>();
+    List<Attribute> inputAttributes = new ArrayList<>();
 
     REXP outputs;
     REXP script;
     REXP env;
 
     REngine re;
-    static Logger log = Logger.getLogger(RStreamProcessor.class);
 
     @Override
-    protected void process(ComplexEventChunk<StreamEvent> complexEventChunk, Processor processor,
-                           StreamEventCloner streamEventCloner, ComplexEventPopulater complexEventPopulater) {
+    protected void process(ComplexEventChunk<StreamEvent> complexEventChunk,
+                           Processor processor,
+                           StreamEventCloner streamEventCloner,
+                           ComplexEventPopulater complexEventPopulater,
+                           S state) {
         StreamEvent streamEvent;
         StreamEvent lastCurrentEvent = null;
-        List<StreamEvent> eventList = new ArrayList<StreamEvent>();
+        List<StreamEvent> eventList = new ArrayList<>();
         while (complexEventChunk.hasNext()) {
             streamEvent = complexEventChunk.next();
             if (streamEvent.getType() == ComplexEvent.Type.CURRENT) {
@@ -125,7 +129,7 @@ public abstract class RStreamProcessor extends StreamProcessor {
             Object[] data = new Object[out.size()];
             for (int i = 0; i < out.size(); i++) {
                 result = ((REXP) out.get(i));
-                switch (additionalAttributes.get(i).getType()) {
+                switch (getReturnAttributes().get(i).getType()) {
                     case BOOL:
                         if (result.isLogical()) {
                             data[i] = (result.asInteger() == 1);
@@ -158,7 +162,7 @@ public abstract class RStreamProcessor extends StreamProcessor {
                         break;
                     default:
                         throw new SiddhiAppRuntimeException(
-                                "Mismatch in returned and expected output. Expected: " + additionalAttributes.get(i)
+                                "Mismatch in returned and expected output. Expected: " + getReturnAttributes().get(i)
                                         .getType() + " Returned: " + result.asNativeJavaObject().getClass()
                                         .getCanonicalName());
                 }
@@ -215,12 +219,10 @@ public abstract class RStreamProcessor extends StreamProcessor {
 
     @Override
     public void start() {
-
     }
 
     @Override
     public void stop() {
-
     }
 
     private REXP doubleToREXP(List<StreamEvent> list, ExpressionExecutor expressionExecutor) {

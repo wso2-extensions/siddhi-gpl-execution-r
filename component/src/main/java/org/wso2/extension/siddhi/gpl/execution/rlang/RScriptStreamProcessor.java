@@ -18,22 +18,26 @@
 
 package org.wso2.extension.siddhi.gpl.execution.rlang;
 
-import org.wso2.siddhi.annotation.Example;
-import org.wso2.siddhi.annotation.Extension;
-import org.wso2.siddhi.annotation.Parameter;
-import org.wso2.siddhi.annotation.ReturnAttribute;
-import org.wso2.siddhi.annotation.util.DataType;
-import org.wso2.siddhi.core.config.SiddhiAppContext;
-import org.wso2.siddhi.core.exception.SiddhiAppCreationException;
-import org.wso2.siddhi.core.executor.ConstantExpressionExecutor;
-import org.wso2.siddhi.core.executor.ExpressionExecutor;
-import org.wso2.siddhi.core.executor.VariableExpressionExecutor;
-import org.wso2.siddhi.core.util.config.ConfigReader;
-import org.wso2.siddhi.query.api.definition.AbstractDefinition;
-import org.wso2.siddhi.query.api.definition.Attribute;
+import io.siddhi.annotation.Example;
+import io.siddhi.annotation.Extension;
+import io.siddhi.annotation.Parameter;
+import io.siddhi.annotation.ReturnAttribute;
+import io.siddhi.annotation.util.DataType;
+import io.siddhi.core.config.SiddhiQueryContext;
+import io.siddhi.core.event.stream.MetaStreamEvent;
+import io.siddhi.core.event.stream.holder.StreamEventClonerHolder;
+import io.siddhi.core.exception.SiddhiAppCreationException;
+import io.siddhi.core.executor.ConstantExpressionExecutor;
+import io.siddhi.core.executor.ExpressionExecutor;
+import io.siddhi.core.executor.VariableExpressionExecutor;
+import io.siddhi.core.query.processor.ProcessingMode;
+import io.siddhi.core.util.config.ConfigReader;
+import io.siddhi.core.util.snapshot.state.State;
+import io.siddhi.core.util.snapshot.state.StateFactory;
+import io.siddhi.query.api.definition.AbstractDefinition;
+import io.siddhi.query.api.definition.Attribute;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * This class runs R script for each event and produces aggregated outputs based on the provided input variable
@@ -77,16 +81,24 @@ import java.util.Map;
                         " a tumbling manner. Values are derived for two output parameters named 'c' and 'm' by " +
                         "considering the values of two other parameters named 'time' and 'temp' as the input. ")
 )
-public class RScriptStreamProcessor extends RStreamProcessor {
+public class RScriptStreamProcessor extends RStreamProcessor<State> {
+
+    private List<Attribute> attributes;
 
     @Override
-    protected List<Attribute> init(AbstractDefinition abstractDefinition, ExpressionExecutor[] expressionExecutors,
-                                   ConfigReader configReader, SiddhiAppContext siddhiAppContext) {
+    protected StateFactory<State> init(MetaStreamEvent metaStreamEvent,
+                                       AbstractDefinition abstractDefinition,
+                                       ExpressionExecutor[] attributeExpressionExecutors,
+                                       ConfigReader configReader,
+                                       StreamEventClonerHolder streamEventClonerHolder,
+                                       boolean b,
+                                       boolean b1,
+                                       SiddhiQueryContext siddhiQueryContext) {
         if (attributeExpressionExecutors.length < 2) {
             throw new SiddhiAppCreationException("Wrong number of attributes given. Expected 2 or more, found " +
-                                                         attributeExpressionLength + "\n" +
-                                                         "Usage: #R:eval(script:string, outputVariables:string, "
-                                                         + "input1, ...)");
+                    attributeExpressionLength + "\n" +
+                    "Usage: #R:eval(script:string, outputVariables:string, "
+                    + "input1, ...)");
         }
         String scriptString;
         String outputString;
@@ -98,10 +110,10 @@ public class RScriptStreamProcessor extends RStreamProcessor {
             scriptString = (String) attributeExpressionExecutors[0].execute(null);
         } catch (ClassCastException e) {
             throw new SiddhiAppCreationException("First parameter should be of type string. Found " +
-                                                         attributeExpressionExecutors[0].execute(null).getClass()
-                                                                 .getCanonicalName() + "\n" +
-                                                         "Usage: #R:eval(script:string, outputVariables:string, "
-                                                         + "input1, ...)");
+                    attributeExpressionExecutors[0].execute(null).getClass()
+                            .getCanonicalName() + "\n" +
+                    "Usage: #R:eval(script:string, outputVariables:string, "
+                    + "input1, ...)");
         }
         try {
             if (!(attributeExpressionExecutors[1] instanceof ConstantExpressionExecutor)) {
@@ -110,10 +122,10 @@ public class RScriptStreamProcessor extends RStreamProcessor {
             outputString = (String) attributeExpressionExecutors[1].execute(null);
         } catch (ClassCastException e) {
             throw new SiddhiAppCreationException("Second parameter should be of type string. Found " +
-                                                         attributeExpressionExecutors[1].execute(null).getClass()
-                                                                 .getCanonicalName() + "\n" +
-                                                         "Usage: #R:eval(script:string, outputVariables:string, "
-                                                         + "input1, ...)");
+                    attributeExpressionExecutors[1].execute(null).getClass()
+                            .getCanonicalName() + "\n" +
+                    "Usage: #R:eval(script:string, outputVariables:string, "
+                    + "input1, ...)");
         }
 
         for (int i = 2; i < attributeExpressionLength; i++) {
@@ -123,14 +135,17 @@ public class RScriptStreamProcessor extends RStreamProcessor {
                 throw new SiddhiAppCreationException("Parameter " + (i + 1) + " should be a variable");
             }
         }
-        return initialize(scriptString, outputString);
-    }
-
-    @Override public Map<String, Object> currentState() {
+        attributes = initialize(scriptString, outputString);
         return null;
     }
 
-    @Override public void restoreState(Map<String, Object> map) {
+    @Override
+    public List<Attribute> getReturnAttributes() {
+        return attributes;
+    }
 
+    @Override
+    public ProcessingMode getProcessingMode() {
+        return ProcessingMode.BATCH;
     }
 }
