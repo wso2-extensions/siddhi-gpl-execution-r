@@ -28,13 +28,16 @@ import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.util.EventPrinter;
+import org.wso2.siddhi.core.util.SiddhiTestHelper;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class RScriptTestCase {
 
     static final Logger LOG = Logger.getLogger(RScriptTestCase.class);
 
     private static SiddhiManager siddhiManager;
-    private int count;
+    private AtomicInteger count = new AtomicInteger();
     private double doubleValue;
     private long longValue;
     private int intValue;
@@ -42,7 +45,7 @@ public class RScriptTestCase {
 
     @BeforeMethod
     public void init() {
-        count = 0;
+        count.set(0);
         siddhiManager = new SiddhiManager();
     }
 
@@ -54,32 +57,35 @@ public class RScriptTestCase {
             String executionPlan = defineStream + " @info(name = 'query1') from weather#window.lengthBatch(2)" +
                     "#r:eval(\"c <- sum(time); m <- sum(temp); \", \"c long, m double\"," +
                     " time, temp)" +
-                    " select *" +
+                    " select c, m" +
                     " insert into dataOut;";
             SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(executionPlan);
             siddhiAppRuntime.addCallback("query1", new QueryCallback() {
                 @Override
                 public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
-                    EventPrinter.print(timeStamp, inEvents, removeEvents);
-                    if (inEvents != null) {
 
-                        for (Event event : inEvents) {
-                            longValue = (Long) event.getData(2);
-                            doubleValue = (Double) event.getData(3);
+                    EventPrinter.print(timeStamp, inEvents, removeEvents);
+                    for (Event event : inEvents) {
+                        count.incrementAndGet();
+                        if (count.get() == 1) {
+                            AssertJUnit.assertEquals(30l, event.getData(0));
+                            AssertJUnit.assertEquals(31d, event.getData(1));
                         }
-                        count++;
+                        if (count.get() == 2) {
+                            AssertJUnit.assertEquals(70l, event.getData(0));
+                            AssertJUnit.assertEquals(71d, event.getData(1));
+                        }
                     }
                 }
             });
             siddhiAppRuntime.start();
             InputHandler inputHandler = siddhiAppRuntime.getInputHandler("weather");
-            inputHandler.send(new Object[]{10L, 55.6d});
-            inputHandler.send(new Object[]{20L, 65.6d});
-            inputHandler.send(new Object[]{30L, 75.6d});
-            Thread.sleep(1000);
-            AssertJUnit.assertEquals("Only one event must arrive", 1, count);
-            AssertJUnit.assertEquals("Value 1 returned", 10 + 20, longValue);
-            AssertJUnit.assertEquals("Value 2 returned", (55.6 + 65.6), doubleValue, 1e-4);
+            inputHandler.send(new Object[]{10L, 10.5});
+            inputHandler.send(new Object[]{20L, 20.5});
+            inputHandler.send(new Object[]{30L, 30.5});
+            inputHandler.send(new Object[]{40L, 40.5});
+            inputHandler.send(new Object[]{50L, 50.5});
+            SiddhiTestHelper.waitForEvents(100, 2, count, 60000);
             siddhiAppRuntime.shutdown();
         }
     }
@@ -91,20 +97,23 @@ public class RScriptTestCase {
             String defineStream = "@config(async = 'true') define stream weather (time int, temp double); ";
             String executionPlan = defineStream + " @info(name = 'query1') from weather#window.timeBatch(2 sec)" +
                     "#r:eval('c <- sum(time); m <- sum(temp); ', 'c int, m double', time, temp)" +
-                    " select *" +
+                    " select c, m " +
                     " insert into dataOut;";
             SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(executionPlan);
             siddhiAppRuntime.addCallback("query1", new QueryCallback() {
                 @Override
                 public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
                     EventPrinter.print(timeStamp, inEvents, removeEvents);
-                    if (inEvents != null) {
-
-                        for (Event event : inEvents) {
-                            intValue = (Integer) event.getData(2);
-                            doubleValue = (Double) event.getData(3);
+                    for (Event event : inEvents) {
+                        count.incrementAndGet();
+                        if (count.get() == 1) {
+                            AssertJUnit.assertEquals(30, event.getData(0));
+                            AssertJUnit.assertEquals(121.19999999999999, event.getData(1));
                         }
-                        count++;
+                        if (count.get() == 2) {
+                            AssertJUnit.assertEquals(70, event.getData(0));
+                            AssertJUnit.assertEquals(161.2, event.getData(1));
+                        }
                     }
                 }
             });
@@ -112,12 +121,11 @@ public class RScriptTestCase {
             InputHandler inputHandler = siddhiAppRuntime.getInputHandler("weather");
             inputHandler.send(new Object[]{10, 55.6});
             inputHandler.send(new Object[]{20, 65.6});
-            Thread.sleep(2500);
+            Thread.sleep(3000);
             inputHandler.send(new Object[]{30, 75.6});
-            Thread.sleep(1000);
-            AssertJUnit.assertEquals("Only one event must arrive", 1, count);
-            AssertJUnit.assertEquals("Value 1 returned", 30, intValue);
-            AssertJUnit.assertEquals("Value 2 returned", (55.6 + 65.6), doubleValue, 1e-4);
+            inputHandler.send(new Object[]{40, 85.6});
+            Thread.sleep(2000);
+            SiddhiTestHelper.waitForEvents(100, 2, count, 60000);
             siddhiAppRuntime.shutdown();
         }
     }
@@ -143,7 +151,7 @@ public class RScriptTestCase {
                             doubleValue = (Double) event.getData(2);
                             boolValue = (Boolean) event.getData(3);
                         }
-                        count++;
+                        count.incrementAndGet();
                     }
                 }
             });
@@ -160,5 +168,4 @@ public class RScriptTestCase {
             siddhiAppRuntime.shutdown();
         }
     }
-
 }

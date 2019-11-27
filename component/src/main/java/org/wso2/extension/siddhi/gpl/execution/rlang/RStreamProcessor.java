@@ -64,6 +64,7 @@ public abstract class RStreamProcessor extends StreamProcessor {
     @Override
     protected void process(ComplexEventChunk<StreamEvent> complexEventChunk, Processor processor,
                            StreamEventCloner streamEventCloner, ComplexEventPopulater complexEventPopulater) {
+        ComplexEventChunk<StreamEvent> eventChunk = new ComplexEventChunk<StreamEvent>(true);
         StreamEvent streamEvent;
         StreamEvent lastCurrentEvent = null;
         List<StreamEvent> eventList = new ArrayList<StreamEvent>();
@@ -71,15 +72,15 @@ public abstract class RStreamProcessor extends StreamProcessor {
             streamEvent = complexEventChunk.next();
             if (streamEvent.getType() == ComplexEvent.Type.CURRENT) {
                 eventList.add(streamEvent);
-                lastCurrentEvent = streamEvent;
+                lastCurrentEvent = streamEventCloner.copyStreamEvent(streamEvent);
                 complexEventChunk.remove();
             }
         }
         if (!eventList.isEmpty()) {
             complexEventPopulater.populateComplexEvent(lastCurrentEvent, process(eventList));
-            complexEventChunk.add(lastCurrentEvent);
+            eventChunk.add(lastCurrentEvent);
         }
-        nextProcessor.process(complexEventChunk);
+        nextProcessor.process(eventChunk);
     }
 
     private Object[] process(List<StreamEvent> eventList) throws SiddhiAppRuntimeException {
