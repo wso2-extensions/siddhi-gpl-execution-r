@@ -68,11 +68,11 @@ public class RScriptTestCase {
                     for (Event event : inEvents) {
                         count.incrementAndGet();
                         if (count.get() == 1) {
-                            AssertJUnit.assertEquals(30l, event.getData(0));
+                            AssertJUnit.assertEquals(30L, event.getData(0));
                             AssertJUnit.assertEquals(31d, event.getData(1));
                         }
                         if (count.get() == 2) {
-                            AssertJUnit.assertEquals(70l, event.getData(0));
+                            AssertJUnit.assertEquals(70L, event.getData(0));
                             AssertJUnit.assertEquals(71d, event.getData(1));
                         }
                     }
@@ -162,7 +162,7 @@ public class RScriptTestCase {
             inputHandler.send(new Object[]{30, true});
             Thread.sleep(1000);
             inputHandler.send(new Object[]{40, false});
-            AssertJUnit.assertEquals("Only one event must arrive", 1, count);
+            AssertJUnit.assertEquals("Only one event must arrive", 1, count.get());
             AssertJUnit.assertEquals("Value 1 returned", (10 + 20 + 30) + 0.0, doubleValue, 1e-4);
             AssertJUnit.assertEquals("Value 2 returned", true, boolValue);
             siddhiAppRuntime.shutdown();

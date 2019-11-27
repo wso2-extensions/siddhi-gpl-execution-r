@@ -28,13 +28,16 @@ import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.util.EventPrinter;
+import org.wso2.siddhi.core.util.SiddhiTestHelper;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class RSourceTestCase {
 
     static final Logger LOG = Logger.getLogger(RSourceTestCase.class);
 
     private static SiddhiManager siddhiManager = new SiddhiManager();
-    private int count;
+    private AtomicInteger count = new AtomicInteger();
     private double value1;
     protected double value2;
     private boolean valueBool;
@@ -44,7 +47,7 @@ public class RSourceTestCase {
 
     @BeforeMethod
     public void init() {
-        count = 0;
+        count.set(0);
     }
 
     // get double values to the output stream
@@ -70,7 +73,7 @@ public class RSourceTestCase {
                             value1 = (Double) event.getData(2);
                             valueLong = (Long) event.getData(3);
                         }
-                        count++;
+                        count.incrementAndGet();
                     }
                 }
             });
@@ -82,7 +85,7 @@ public class RSourceTestCase {
             Thread.sleep(5000);
             inputHandler.send(new Object[]{30L, 75.6d});
             Thread.sleep(500);
-            AssertJUnit.assertEquals("Only one event must arrive", 1, count);
+            AssertJUnit.assertEquals("Only one event must arrive", 1, count.get());
             AssertJUnit.assertEquals("Value 1 returned", 121.2, value1, 1e-4);
             AssertJUnit.assertEquals("Value 2 returned", 30L, valueLong, 1e-4);
             siddhiAppRuntime.shutdown();
@@ -112,7 +115,7 @@ public class RSourceTestCase {
                             value1 = (Integer) event.getData(2);
                             valueFloat = (Float) event.getData(3);
                         }
-                        count++;
+                        count.incrementAndGet();
                     }
                 }
             });
@@ -122,8 +125,8 @@ public class RSourceTestCase {
             inputHandler.send(new Object[]{10L, 55.6d});
             inputHandler.send(new Object[]{20L, 65.6d});
             inputHandler.send(new Object[]{30L, 75.6d});
-            Thread.sleep(1000);
-            AssertJUnit.assertEquals("Only one event must arrive", 1, count);
+            SiddhiTestHelper.waitForEvents(100, 1, count, 5000);
+            AssertJUnit.assertEquals("Only one event must arrive", 1, count.get());
             AssertJUnit.assertEquals("Value 1 returned", 121, value1, 1e-4);
             AssertJUnit.assertEquals("Value 2 returned", 30f, valueFloat, 1e-4);
             siddhiAppRuntime.shutdown();
@@ -154,7 +157,7 @@ public class RSourceTestCase {
                             valueString = (String) event.getData(2);
                             valueBool = (Boolean) event.getData(3);
                         }
-                        count++;
+                        count.incrementAndGet();
                     }
                 }
             });
@@ -163,8 +166,8 @@ public class RSourceTestCase {
             InputHandler inputHandler = siddhiAppRuntime.getInputHandler("weather");
             inputHandler.send(new Object[]{123L, 55.6d});
             inputHandler.send(new Object[]{101L, 72.3d});
-            Thread.sleep(1000);
-            AssertJUnit.assertEquals("Only one event must arrive", 1, count);
+            SiddhiTestHelper.waitForEvents(100, 1, count, 5000);
+            AssertJUnit.assertEquals("Only one event must arrive", 1, count.get());
             AssertJUnit.assertEquals("Value 1 returned", "178.6", valueString);
             AssertJUnit.assertEquals("Value 2 returned", true, valueBool);
             siddhiAppRuntime.shutdown();
