@@ -1,0 +1,14 @@
+{
+    "name": "r language",
+    "owner": "WSO2",
+    "category": "Siddhi Execution",
+    "documentationUrl": "https://wso2-extensions.github.io/siddhi-gpl-execution-r/",
+    "description": "The siddhi-gpl-execution-r extension is an extension to Siddhi that can be used to process events with R scripts.",
+    "status": "Active",
+    "labels": [
+        "siddhi",
+        "siddhi-execution",
+        "gpl-r"
+    ],
+    "releases": []
+}
