@@ -10,5 +10,10 @@
         "siddhi-execution",
         "gpl-r"
     ],
-    "releases": []
+    "releases": [
+        {
+            "tagName": "4.0.14",
+            "products": []
+        }
+    ]
 }
